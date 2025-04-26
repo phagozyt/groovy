@@ -1,0 +1,35 @@
+//This code is written in groovy and used in QuPath
+//You MUST adapt the file directories to your location
+//This code is made to be used for H&E whole slide tissue 
+//Before using: You have to
+//1) created a Pixel Classifier to detect your tissue (name in line 19 & 25, 28)
+//2) figure out which Annotations (or objects) should be deleted, enter name in line 31
+//enjoy and let me know if there are issues alina.gavrilov@yahoo.de
+
+
+setImageType('BRIGHTFIELD_H_E');
+setColorDeconvolutionStains('{"Name" : "H&E default", "Stain 1" : "Hematoxylin", "Values 1" : "0.65111 0.70119 0.29049", "Stain 2" : "Eosin", "Values 2" : "0.2159 0.8012 0.5581", "Background" : " 255 255 255"}');
+resetSelection();
+
+
+selectAnnotations()
+clearSelectedObjects();
+
+//HERE enter YOUR created pixelclassifier name
+createAnnotationsFromPixelClassifier("wholetissue_v1", 1000000.0, 0.0, "DELETE_EXISTING")
+
+//HERE enter YOUR Classifier name for next classification to be run on
+selectObjectsByClassification("whole tissue");
+
+//HERE enter YOUR created pixelclassifier name
+createAnnotationsFromPixelClassifier("alveoli_v1", 100.0, 0.0, "DELETE_EXISTING")
+
+//Optional: measurements
+addPixelClassifierMeasurements("alveoli_v1", "alveoli_v1")
+
+//HERE enter YOUR Annotation(s) you want to get rid of
+selectObjects { p -> p.getPathClass() == getPathClass("Unclassified") && p.isAnnotation() }
+clearSelectedObjects();
+
+
+//other useful commands: https://gist.github.com/Svidro/8f9c06e2c8bcae214cdd7aa9afe57c50 thanks Svidro!
